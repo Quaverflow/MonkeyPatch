@@ -11,7 +11,7 @@ namespace MonkeyPatcher.MonkeyPatch.Concrete;
 
 public class MonkeyPatch : IDisposable
 {
-    private readonly List<IDetour?> _detours = new();
+    private static readonly List<IDetour?> _detours = new();
     private static List<MethodStructure> _systemUnderTest;
     private static ConcurrentQueue<(int, MethodStructure)> _systemUnderTestCallSpecific = new();
     private readonly Delegate _disposed;
@@ -116,8 +116,9 @@ public class MonkeyPatch : IDisposable
             var distinct = _systemUnderTest.Where(x => x.IsDetoured);
             foreach (var method in distinct)
             {
-                foreach (var t in method.Indexes)
+                for (var i = 0; i < method.Indexes.Count; i++)
                 {
+                    var t = method.Indexes[i];
                     _systemUnderTestCallSpecific.Enqueue((t, method));
                 }
             }
@@ -201,13 +202,14 @@ public class MonkeyPatch : IDisposable
 
     public void Dispose()
     {
-        _disposed.DynamicInvoke(true);
         _systemUnderTest.Clear();
         _systemUnderTestCallSpecific.Clear();
         foreach (var x in _detours)
         {
             x?.Dispose();
         }
+        _detours.Clear();
+        _disposed.DynamicInvoke(true);
         GC.SuppressFinalize(this);
     }
 }

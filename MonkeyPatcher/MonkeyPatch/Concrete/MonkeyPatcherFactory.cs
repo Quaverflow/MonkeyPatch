@@ -15,7 +15,7 @@ public static class MonkeyPatcherFactory
     /// <returns></returns>
     public static MonkeyPatch GetMonkeyPatch(Delegate sut, int maxScanningDepth = 5)
     {
-            
+
         var methodInfo = sut.Method;
         while (!_available)
         {
@@ -25,7 +25,8 @@ public static class MonkeyPatcherFactory
         }
         _available = false;
 
-        return new MonkeyPatch(Disposed, methodInfo, maxScanningDepth);
+        var patcher =new MonkeyPatch(Disposed, methodInfo, maxScanningDepth);
+        return patcher;
     }
 
     public static void Disposed(ref bool disposed)
