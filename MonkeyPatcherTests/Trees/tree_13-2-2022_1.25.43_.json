@@ -1,0 +1,1 @@
+[{"Signature":"public Task\u003Cint\u003E PrivateMethodWithReturnAsync(a)","Owner":"MonkeyPatcherTests.TestObjects.CallingPublic","ReturnType":"System.Threading.Tasks.Task\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]","Children":[]}]
