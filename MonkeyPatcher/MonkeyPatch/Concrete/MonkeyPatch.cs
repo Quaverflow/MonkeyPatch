@@ -1,6 +1,5 @@
 ﻿using MonkeyPatcher.MonkeyPatch.Concrete.Dto;
 using MonoMod.RuntimeDetour;
-using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 using Utilities;
@@ -10,17 +9,17 @@ namespace MonkeyPatcher.MonkeyPatch.Concrete;
 
 public class MonkeyPatch : IDisposable
 {
-    private static readonly List<IDetour?> _detours = new();
-    private static List<MethodStructure> _systemUnderTest;
+    private static readonly List<IDetour?> Detours = new();
+    private static readonly List<MethodStructure> SystemUnderTest = new();
     private static Queue<(int, MethodStructure)> _systemUnderTestCallSpecific = new();
     private readonly Delegate _disposed;
     internal MonkeyPatch(Delegate disposed, MethodInfo caller, int maxScanningDepth)
     {
         _disposed = disposed;
-        _systemUnderTest = caller.BuildMap(maxScanningDepth);
+        SystemUnderTest.AddRange(caller.BuildMap(maxScanningDepth));
     }
 
-    private static MethodStructure? GetStructure(MethodInfo original) => _systemUnderTest.FirstOrDefault(x => x.Key == original.GetKey());
+    private static MethodStructure? GetStructure(MethodInfo original) => SystemUnderTest.FirstOrDefault(x => x.Key == original.GetKey());
 
     internal void Patch<TReturn>(MethodInfo original, Delegate? actual)
     {
@@ -37,12 +36,12 @@ public class MonkeyPatch : IDisposable
         if (returnType is { IsClass: true })
         {
             var func = WrapRefType;
-            _detours.Add(new NativeDetour(original, func.Method));
+            Detours.Add(new NativeDetour(original, func.Method));
         }
         else
         {
             var func = Wrap<TReturn>;
-            _detours.Add(new NativeDetour(original, func.Method));
+            Detours.Add(new NativeDetour(original, func.Method));
         }
     }
 
@@ -51,7 +50,7 @@ public class MonkeyPatch : IDisposable
         ProcessStructure(original, actual);
 
         var func = WrapRefType;
-        _detours.Add(new NativeDetour(original, func.Method));
+        Detours.Add(new NativeDetour(original, func.Method));
     }
 
     private static void ProcessStructure(MethodInfo original, Delegate? actual)
@@ -104,7 +103,7 @@ public class MonkeyPatch : IDisposable
         if (!_systemUnderTestCallSpecific.Any())
         {
             _systemUnderTestCallSpecific = new Queue<(int, MethodStructure)>();
-            var distinct = _systemUnderTest.Where(x => x.IsDetoured).ToList();
+            var distinct = SystemUnderTest.Where(x => x.IsDetoured).ToList();
             foreach (var structure in distinct)
             {
                 foreach (var index in structure.Indexes)
@@ -135,10 +134,8 @@ public class MonkeyPatch : IDisposable
     /// <typeparam name="TClass"></typeparam>
     /// <param name="expression"></param>
     /// <param name="actual"></param>
-    public void OverrideVoid<TClass>(Expression<Action<TClass>> expression, Action? actual = null) where TClass : class
-    {
-        PatchVoid(GenerateMethodInfo(expression.Body), actual ?? EmptyMethod);
-    }
+    public void OverrideVoid<TClass>(Expression<Action<TClass>> expression, Action? actual = null) where TClass : class 
+        => PatchVoid(GenerateMethodInfo(expression.Body), actual ?? EmptyMethod);
 
     private static MethodInfo GenerateMethodInfo(Expression expression) => ((MethodCallExpression)expression).Method;
 
@@ -151,7 +148,9 @@ public class MonkeyPatch : IDisposable
     public void OverrideNonPublicMethod<TClass, TResult>(NonPublicMethodInfo<TResult> methodInfo) where TClass : class
     {
         var (methodName, accessType, actual, methodParameters) = methodInfo;
-        var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters);
+
+        //ReflectionHelpers.FindMethod can handle null methodParameters
+        var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters!);
         Patch<TResult>(originalMethod, actual);
     }
 
@@ -163,7 +162,9 @@ public class MonkeyPatch : IDisposable
     public void OverrideNonPublicVoidMethod<TClass>(NonPublicVoidMethodInfo methodInfo) where TClass : class
     {
         var (methodName, accessType, methodParameters) = methodInfo;
-        var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters);
+
+        //ReflectionHelpers.FindMethod can handle null methodParameters
+        var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters!);
         PatchVoid(originalMethod, () => 0);
     }
 
@@ -175,7 +176,9 @@ public class MonkeyPatch : IDisposable
     public void OverrideNonPublicVoidMethodInvokeAction<TClass>(NonPublicVoidMethodWithActionInfo methodInfo) where TClass : class
     {
         var (methodName, accessType, actual, methodParameters) = methodInfo;
-        var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters);
+        
+        //ReflectionHelpers.FindMethod can handle null methodParameters
+        var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters!);
         PatchVoid(originalMethod, actual);
     }
 
@@ -183,13 +186,13 @@ public class MonkeyPatch : IDisposable
 
     public void Dispose()
     {
-        _systemUnderTest.Clear();
+        SystemUnderTest.Clear();
         _systemUnderTestCallSpecific.Clear();
-        foreach (var x in _detours)
+        foreach (var x in Detours)
         {
             x?.Dispose();
         }
-        _detours.Clear();
+        Detours.Clear();
         _disposed.DynamicInvoke(true);
         GC.SuppressFinalize(this);
     }
