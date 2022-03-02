@@ -12,7 +12,7 @@ public class MonkeyPatch : IDisposable
 {
     private static readonly List<IDetour?> _detours = new();
     private static List<MethodStructure> _systemUnderTest;
-    private static ConcurrentQueue<(int, MethodStructure)> _systemUnderTestCallSpecific = new();
+    private static Queue<(int, MethodStructure)> _systemUnderTestCallSpecific = new();
     private readonly Delegate _disposed;
     internal MonkeyPatch(Delegate disposed, MethodInfo caller, int maxScanningDepth)
     {
@@ -103,18 +103,15 @@ public class MonkeyPatch : IDisposable
     {
         if (!_systemUnderTestCallSpecific.Any())
         {
-            _systemUnderTestCallSpecific = new ConcurrentQueue<(int, MethodStructure)>();
+            _systemUnderTestCallSpecific = new Queue<(int, MethodStructure)>();
             var distinct = _systemUnderTest.Where(x => x.IsDetoured).ToList();
-            for (var ei = 0; ei < distinct.Count; ei++)
-
+            foreach (var structure in distinct)
             {
-                for (var i = 0; i < distinct[ei].Indexes.Count; i++)
+                foreach (var index in structure.Indexes)
                 {
-                    var t = distinct[ei].Indexes[i];
-                    _systemUnderTestCallSpecific.Enqueue((t, distinct[ei]));
+                    _systemUnderTestCallSpecific.Enqueue((index, structure));
                 }
             }
-
         }
 
         (int, MethodStructure) sut;
