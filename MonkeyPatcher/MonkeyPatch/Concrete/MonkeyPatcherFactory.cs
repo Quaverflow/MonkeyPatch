@@ -3,8 +3,7 @@
 public static class MonkeyPatcherFactory
 {
     private static bool _available = true;
-    private static object _lock = new();
-    private static MonkeyPatch _patcher;
+    private static readonly object Lock = new();
 
     /// <summary>
     /// Generates an instance of the monkey patcher.
@@ -19,17 +18,17 @@ public static class MonkeyPatcherFactory
     {
         //Double check to make sure the thread is aware of the state of the object upon entering the lock.
         WaitForAccess();
-        lock (_lock)
+        lock (Lock)
         {
             WaitForAccess();
             _available = false;
-            _patcher = new MonkeyPatch(Disposed, sut.Method, maxScanningDepth);
+            return new MonkeyPatch(Disposed, sut.Method, maxScanningDepth);
         }
-        return _patcher;
     }
 
     private static void WaitForAccess()
     {
+
         while (!_available) { /* Wait for the previous test to complete */ }
     }
 
