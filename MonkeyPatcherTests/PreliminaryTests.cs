@@ -163,12 +163,34 @@ public class PreliminaryTests
         sut.CallStaticVoid();
     }
 
+    [Fact]
+    public void Test_ExtensionMethodReturn()
+    {
+        var sut = new TestClassCallsStatic();
+        using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.CallExtensionReturn);
+        mp.Override(() => Any<int>.Value.ExtensionMethodReturns(), () => 30);
+
+        Assert.Equal(30, sut.CallExtensionReturn());
+    }
+
+    [Fact]
+    public void Test_ExtensionMethod()
+    {
+        var sut = new TestClassCallsStatic();
+        using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.CallExtensionVoid);
+        mp.OverrideVoid(() => Any<int>.Value.ExtensionMethodReturnsVoid());
+
+        sut.CallExtensionVoid();
+    }
+
 }
 
 public class TestClassCallsStatic
 {
     public int CallStaticReturn() => TestStaticClass.StaticMethodReturns();
     public void CallStaticVoid() => TestStaticClass.StaticMethodReturnsVoid();
+    public void CallExtensionVoid() => 3.ExtensionMethodReturnsVoid();
+    public int CallExtensionReturn() => 3.ExtensionMethodReturns();
 }
 
 public static class TestStaticClass
