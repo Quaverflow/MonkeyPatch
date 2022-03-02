@@ -59,6 +59,13 @@ public class MonkeyPatch : IDisposable
         actual.ThrowIfNull();
 
         var structure = GetStructure(original);
+        if (structure == null)
+        {
+            throw new NullReferenceException(@"
+The structure was null. 
+This error is usually caused by the patcher not being disposed.
+Make sure you prepend all of your MonkeyPatch instances with 'using'");
+        }
         structure.ThrowIfNull();
 
         structure.IsDetoured = true;

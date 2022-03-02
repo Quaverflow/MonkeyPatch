@@ -77,7 +77,11 @@ public static class MonkeyPatcherFactory
         while (!_available)
         {
              /* Wait for the previous test to complete */
-             (stopWatch.ElapsedMilliseconds < timeOut).ThrowIfAssumptionFailed($"Timed out at {(double)timeOut/1000} seconds");
+             (stopWatch.ElapsedMilliseconds < timeOut)
+                 .ThrowIfAssumptionFailed($@"
+Timed out at {(double)timeOut/1000} seconds
+This error is often caused by the patcher not being disposed.
+Make sure you prepend all of your MonkeyPatch instances with 'using'");
         }
         stopWatch.Stop();
     }
