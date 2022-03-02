@@ -115,4 +115,17 @@ public class InterfacesTests
         Assert.False(db[1]);
     }
 
+    [Fact]
+    public void Test_Abstract()
+    {
+        var proxy = new Proxy<SomethingAbstract>();
+        proxy.Setup(x => x.SomeAbstractReturns(Any<string>.Value), () => 13);
+
+        TryAbstract(proxy.Object, 13);
+    }
+
+    private void TryAbstract(SomethingAbstract sut, int result)
+    {
+       Assert.Equal(result, sut.SomeAbstractReturns("hello"));
+    }
 }

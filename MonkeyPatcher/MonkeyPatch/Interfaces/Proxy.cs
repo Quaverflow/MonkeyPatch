@@ -9,7 +9,13 @@ public class Proxy<T> where T : class
 
     private static readonly ProxyGenerator Generator = new();
     private static readonly ProxyGenerationOptions Options = new() { Selector = new MethodSelector() };
-    private T GenerateProxy() => (T)Generator.CreateInterfaceProxyWithoutTarget(typeof(T), Type.EmptyTypes, Options, Interceptors.ToArray());
+    private T GenerateProxy()
+    {
+        return typeof(T).IsInterface 
+                ? (T) Generator.CreateInterfaceProxyWithoutTarget(typeof(T), Type.EmptyTypes, Options, Interceptors.ToArray())
+                : (T)Generator.CreateClassProxy(typeof(T), Type.EmptyTypes, Options, Interceptors.ToArray());
+    }
+
 }
 
 
