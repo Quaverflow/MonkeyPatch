@@ -3,7 +3,9 @@
 public static class MonkeyPatcherFactory
 {
     private static bool _available = true;
-    private static object _lock = new ();
+    private static object _lock = new();
+    private static MonkeyPatch _patcher;
+
     /// <summary>
     /// Generates an instance of the monkey patcher.
     /// maxScanningDepth allows you to specify how deep the analyzer should scan for methods to override.
@@ -15,18 +17,15 @@ public static class MonkeyPatcherFactory
     /// <returns></returns>
     public static MonkeyPatch GetMonkeyPatch(Delegate sut, int maxScanningDepth = 5)
     {
-
-        var methodInfo = sut.Method;
-        while (!_available)
+        //Double check to make sure the thread is aware of the state of the object upon entering the lock.
+        while (!_available) { /* Wait for the previous test to complete */ }
+        lock (_lock)
         {
-            //todo figure out a better way to do this
-            //this is fundamental in preventing the concurrency issue do not remove!
-            Thread.Sleep(1);
+            while (!_available) { /* Wait for the previous test to complete */ }
+            _available = false;
+            _patcher = new MonkeyPatch(Disposed, sut.Method, maxScanningDepth);
         }
-        _available = false;
-
-        var patcher =new MonkeyPatch(Disposed, methodInfo, maxScanningDepth);
-        return patcher;
+        return _patcher;
     }
 
     public static void Disposed(ref bool disposed)

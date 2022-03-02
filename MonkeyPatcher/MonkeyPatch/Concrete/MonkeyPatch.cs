@@ -1,9 +1,8 @@
-﻿using System.Collections.Concurrent;
-using MonkeyPatcher.MonkeyPatch.Concrete.Dto;
+﻿using MonkeyPatcher.MonkeyPatch.Concrete.Dto;
 using MonoMod.RuntimeDetour;
+using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using Utilities;
 using Utilities.ExtensionMethods;
 
@@ -113,13 +112,14 @@ public class MonkeyPatch : IDisposable
         if (!_systemUnderTestCallSpecific.Any())
         {
             _systemUnderTestCallSpecific = new ConcurrentQueue<(int, MethodStructure)>();
-            var distinct = _systemUnderTest.Where(x => x.IsDetoured);
-            foreach (var method in distinct)
+            var distinct = _systemUnderTest.Where(x => x.IsDetoured).ToList();
+            for (var ei = 0; ei < distinct.Count; ei++)
+
             {
-                for (var i = 0; i < method.Indexes.Count; i++)
+                for (var i = 0; i < distinct[ei].Indexes.Count; i++)
                 {
-                    var t = method.Indexes[i];
-                    _systemUnderTestCallSpecific.Enqueue((t, method));
+                    var t = distinct[ei].Indexes[i];
+                    _systemUnderTestCallSpecific.Enqueue((t, distinct[ei]));
                 }
             }
 
