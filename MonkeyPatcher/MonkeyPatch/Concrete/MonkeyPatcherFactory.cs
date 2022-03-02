@@ -18,17 +18,22 @@ public static class MonkeyPatcherFactory
     public static MonkeyPatch GetMonkeyPatch(Delegate sut, int maxScanningDepth = 5)
     {
         //Double check to make sure the thread is aware of the state of the object upon entering the lock.
-        while (!_available) { /* Wait for the previous test to complete */ }
+        WaitForAccess();
         lock (_lock)
         {
-            while (!_available) { /* Wait for the previous test to complete */ }
+            WaitForAccess();
             _available = false;
             _patcher = new MonkeyPatch(Disposed, sut.Method, maxScanningDepth);
         }
         return _patcher;
     }
 
-    public static void Disposed(ref bool disposed)
+    private static void WaitForAccess()
+    {
+        while (!_available) { /* Wait for the previous test to complete */ }
+    }
+
+    private static void Disposed(ref bool disposed)
     {
         _available = disposed;
     }
