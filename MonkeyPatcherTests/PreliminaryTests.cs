@@ -16,7 +16,7 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.Sync);
-        mp.Override<TestDependency, int>(x => TestDependency.ToOverride(Any<int>.Value), () => 3);
+        mp.Override (() => TestDependency.ToOverride(Any<int>.Value), () => 3);
 
         var res = sut.Sync();
         res.Should().Be(3);
@@ -27,7 +27,7 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.SyncVoid);
-        mp.OverrideVoid<TestDependency>(x => TestDependency.ToOverrideVoid(Any<int>.Value));
+        mp.OverrideVoid(() => TestDependency.ToOverrideVoid(Any<int>.Value));
 
         sut.Invoking(x => x.SyncVoid()).Should().NotThrow();
     }
@@ -37,9 +37,9 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.MultipleCalls);
-        mp.Override<TestDependency, Task>(x => TestDependency.ToOverrideAsyncRet(Any<int>.Value), () => Task.FromResult(3));
+        mp.Override(() => TestDependency.ToOverrideAsyncRet(Any<int>.Value), () => Task.FromResult(3));
         mp.OverrideVoid<TestDependency>(x => TestDependency.ToOverrideVoid(Any<int>.Value));
-        mp.Override<TestDependency, int>(x => TestDependency.ToOverride(Any<int>.Value), () => 3);
+        mp.Override(() => TestDependency.ToOverride(Any<int>.Value), () => 3);
 
         await sut.Invoking(x => x.MultipleCalls()).Should().NotThrowAsync();
         var res = await sut.MultipleCalls();
@@ -50,9 +50,9 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.MultipleCalls);
-        mp.Override<TestDependency, Task>(x => TestDependency.ToOverrideAsyncRet(Any<int>.Value), () => Task.FromResult(3));
+        mp.Override(() => TestDependency.ToOverrideAsyncRet(Any<int>.Value), () => Task.FromResult(3));
         mp.OverrideVoid<TestDependency>(x => TestDependency.ToOverrideVoid(Any<int>.Value));
-        mp.Override<TestDependency, int>(x => TestDependency.ToOverride(Any<int>.Value), () => 3);
+        mp.Override(() => TestDependency.ToOverride(Any<int>.Value), () => 3);
 
         await sut.Invoking(x => x.Deep()).Should().NotThrowAsync();
         var res = await sut.Deep();
@@ -64,13 +64,13 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.Sync);
-        mp.Override<TestDependency, int>(x => TestDependency.ToOverride(Any<int>.Value), () => 3);
+        mp.Override(() => TestDependency.ToOverride(Any<int>.Value), () => 3);
 
         var res = sut.Sync();
         res.Should().Be(3);
 
 
-        mp.Override<TestDependency, int>(x => TestDependency.ToOverride(Any<int>.Value), () => 10);
+        mp.Override(() => TestDependency.ToOverride(Any<int>.Value), () => 10);
         var res2 = sut.Sync();
         res2.Should().Be(10);
 
@@ -81,7 +81,7 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.Sync);
-        mp.Override<TestDependency, int>(x => TestDependency.ToOverride(Any<int>.Value), () => throw new Exception("hello"));
+        mp.Override(() => TestDependency.ToOverride(Any<int>.Value), () => throw new Exception("hello"));
 
         var res = Assert.Throws<Exception>(() => sut.Sync());
         res.Message.Should().Be("hello");
@@ -92,7 +92,7 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.AsyncRet);
-        mp.Override<TestDependency, Task>(x => TestDependency.ToOverrideAsyncRet(Any<int>.Value), () => Task.FromResult(3));
+        mp.Override(() => TestDependency.ToOverrideAsyncRet(Any<int>.Value), () => Task.FromResult(3));
 
         var res = await sut.AsyncRet();
         res.Should().Be(3);
@@ -104,7 +104,7 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.AsyncTask);
-        mp.Override<TestDependency, Task>(x => TestDependency.ToOverrideAsyncTask(Any<int>.Value), () => Task.CompletedTask);
+        mp.Override(() => TestDependency.ToOverrideAsyncTask(Any<int>.Value), () => Task.CompletedTask);
         await sut.Invoking(x => x.AsyncTask()).Should().NotThrowAsync();
     }
 
@@ -115,7 +115,7 @@ public class PreliminaryTests
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.SyncReturnsStruct);
 
         var datetime = DateTime.UtcNow;
-        mp.Override<TestDependency, DateTime>(x => TestDependency.ToOverrideReturnsStruct(), () => datetime);
+        mp.Override(() => TestDependency.ToOverrideReturnsStruct(), () => datetime);
         sut.Invoking(x => x.SyncReturnsStruct(Any<DateTime>.Value)).Should().NotThrow();
         sut.SyncReturnsStruct(Any<DateTime>.Value).Should().Be(datetime);
 
@@ -134,16 +134,47 @@ public class PreliminaryTests
             Name = "Hello"
         };
 
-        mp.Override<TestDependency, TestPoco>(x => TestDependency.ToOverrideReturnClass(), () => poco);
+        mp.Override(() => TestDependency.ToOverrideReturnClass(), () => poco);
         sut.Invoking(x => x.SyncReturnClass(Any<TestPoco>.Value)).Should().NotThrow();
 
         var res = sut.SyncReturnClass(Any<TestPoco>.Value);
         res.Age.Should().Be(poco.Age);
         res.Name.Should().Be(poco.Name);
         res.DateOfBirth.Should().Be(poco.DateOfBirth);
+    }
 
+    [Fact]
+    public void Test_StaticClassReturn()
+    {
+        var sut = new TestClassCallsStatic();
+        using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.CallStaticReturn);
+        mp.Override(() => TestStaticClass.StaticMethodReturns(), () => 3);
+
+        Assert.Equal(3, sut.CallStaticReturn());
+    }
+
+    [Fact]
+    public void Test_StaticClassVoid()
+    {
+        var sut = new TestClassCallsStatic();
+        using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.CallStaticVoid);
+        mp.OverrideVoid(() => TestStaticClass.StaticMethodReturnsVoid());
+
+        sut.CallStaticVoid();
     }
 
 }
 
+public class TestClassCallsStatic
+{
+    public int CallStaticReturn() => TestStaticClass.StaticMethodReturns();
+    public void CallStaticVoid() => TestStaticClass.StaticMethodReturnsVoid();
+}
 
+public static class TestStaticClass
+{
+    public static int StaticMethodReturns() => throw new NotImplementedException();
+    public static void StaticMethodReturnsVoid() => throw new NotImplementedException();
+    public static int ExtensionMethodReturns<T>(this T _) => throw new NotImplementedException();
+    public static void ExtensionMethodReturnsVoid<T>(this T _) => throw new NotImplementedException();
+}

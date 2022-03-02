@@ -31,9 +31,10 @@ public class MonkeyPatch : IDisposable
         if (returnType.BaseType == typeof(Task))
         {
             returnType = typeof(TReturn).GetGenericArguments().FirstOrDefault();
+            var func = WrapRefType;
+            Detours.Add(new NativeDetour(original, func.Method));
         }
-
-        if (returnType is { IsClass: true })
+        else if (returnType is { IsClass: true })
         {
             var func = WrapRefType;
             Detours.Add(new NativeDetour(original, func.Method));
@@ -117,24 +118,42 @@ public class MonkeyPatch : IDisposable
     }
 
     /// <summary>
-    /// For methods that should return null or a value, with an optional callback function.
+    /// For instance methods that should return null or a value, with an optional callback function.
     /// </summary>
     /// <typeparam name="TClass"></typeparam>
     /// <typeparam name="TResult"></typeparam>
     /// <param name="expression"></param>
     /// <param name="actual"></param>
-    //public void Override<TClass, TResult>(Expression<Func<TClass, TResult>> expression, Func<TResult> actual) where TClass : class
-    //      => PatchVoid(GenerateMethodInfo(expression.Body), actual);
-    public void Override<TClass, TResult>(Expression<Func<TClass, TResult>> expression, Func<TResult>? actual) where TClass : class
+       public void Override<TClass, TResult>(Expression<Func<TClass, TResult>> expression, Func<TResult>? actual) where TClass : class
           => Patch<TResult>(GenerateMethodInfo(expression.Body), actual);
 
     /// <summary>
-    /// For void methods, with an optional callback.
+    /// For static methods that should return null or a value, with an optional callback function.
+    /// </summary>
+    /// <typeparam name="TClass"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="expression"></param>
+    /// <param name="actual"></param>
+    public void Override<TResult>(Expression<Func<TResult>> expression, Func<TResult>? actual) 
+          => Patch<TResult>(GenerateMethodInfo(expression.Body), actual);
+
+    /// <summary>
+    /// For instance void methods, with an optional callback.
     /// </summary>
     /// <typeparam name="TClass"></typeparam>
     /// <param name="expression"></param>
     /// <param name="actual"></param>
     public void OverrideVoid<TClass>(Expression<Action<TClass>> expression, Action? actual = null) where TClass : class 
+        => PatchVoid(GenerateMethodInfo(expression.Body), actual ?? EmptyMethod);
+
+
+    /// <summary>
+    /// For static void methods, with an optional callback.
+    /// </summary>
+    /// <typeparam name="TClass"></typeparam>
+    /// <param name="expression"></param>
+    /// <param name="actual"></param>
+    public void OverrideVoid(Expression<Action> expression, Action? actual = null)
         => PatchVoid(GenerateMethodInfo(expression.Body), actual ?? EmptyMethod);
 
     private static MethodInfo GenerateMethodInfo(Expression expression) => ((MethodCallExpression)expression).Method;

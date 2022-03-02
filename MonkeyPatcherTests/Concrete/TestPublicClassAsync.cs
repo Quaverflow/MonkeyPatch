@@ -47,7 +47,7 @@ public class TestPublicClassAsync
     {
         var sut = new CallingPublic(); 
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.StaticMethodWithReturnAsync);
-        mp.Override<PublicClassToOverride, Task>(x => PublicClassToOverride.StaticMethodWithReturnAsync(), () => Task.FromResult(3));
+        mp.Override(()=> PublicClassToOverride.StaticMethodWithReturnAsync(), () => Task.FromResult(3));
 
         await sut.Invoking(x => x.StaticMethodWithReturnAsync(Any<int>.Value)).Should().NotThrowAsync();
         (await sut.StaticMethodWithReturnAsync(Any<int>.Value)).Should().Be(3);
@@ -102,7 +102,8 @@ public class TestPublicClassAsync
     {
         var sut = new CallingPublic(); 
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.PrivateMethodWithReturnAsync);
-        mp.OverrideNonPublicMethod<PublicClassToOverride, Task>(new NonPublicMethodInfo<Task>("PrivateMethodWithReturnAsync", AccessType.Private, () => Task.FromResult(3)));
+        mp.OverrideNonPublicMethod<PublicClassToOverride, Task>(
+            new NonPublicMethodInfo<Task>("PrivateMethodWithReturnAsync", AccessType.Private, () => Task.FromResult(3)));
 
         await sut.Invoking(x => x.PrivateMethodWithReturnAsync(Any<int>.Value)).Should().NotThrowAsync();
         (await sut.PrivateMethodWithReturnAsync(Any<int>.Value)).Should().Be(3);
@@ -113,7 +114,8 @@ public class TestPublicClassAsync
     {
         var sut = new CallingPublic(); 
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.PrivateVoidMethodAsync);
-        mp.OverrideNonPublicMethod<PublicClassToOverride, Task>(new NonPublicMethodInfo<Task>("PrivateVoidMethodAsync", AccessType.Private, () => Task.CompletedTask));
+        mp.OverrideNonPublicMethod<PublicClassToOverride, Task>(
+            new NonPublicMethodInfo<Task>("PrivateVoidMethodAsync", AccessType.Private, () => Task.CompletedTask));
 
         await sut.Invoking(x => x.PrivateVoidMethodAsync(Any<int>.Value)).Should().NotThrowAsync();
     }
@@ -123,7 +125,8 @@ public class TestPublicClassAsync
     {
         var sut = new CallingPublic();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.PrivateStaticMethodWithReturnAsync);
-        mp.OverrideNonPublicMethod<PublicClassToOverride, Task>(new NonPublicMethodInfo<Task>("PrivateStaticMethodWithReturnAsync", AccessType.PrivateStatic, () => Task.FromResult(3)));
+        mp.OverrideNonPublicMethod<PublicClassToOverride, Task>(
+            new NonPublicMethodInfo<Task>("PrivateStaticMethodWithReturnAsync", AccessType.PrivateStatic, () => Task.FromResult(3)));
 
         await sut.Invoking(x => x.PrivateStaticMethodWithReturnAsync(Any<int>.Value)).Should().NotThrowAsync();
         (await sut.PrivateStaticMethodWithReturnAsync(Any<int>.Value)).Should().Be(3);
@@ -134,7 +137,8 @@ public class TestPublicClassAsync
     {
         var sut = new CallingPublic();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.PrivateStaticVoidMethodAsync);
-        mp.OverrideNonPublicMethod<PublicClassToOverride, Task>(new NonPublicMethodInfo<Task>("PrivateStaticVoidMethodAsync", AccessType.PrivateStatic, () => Task.CompletedTask));
+        mp.OverrideNonPublicMethod<PublicClassToOverride, Task>(
+            new NonPublicMethodInfo<Task>("PrivateStaticVoidMethodAsync", AccessType.PrivateStatic, () => Task.CompletedTask));
 
         await sut.Invoking(x => x.PrivateStaticVoidMethodAsync(Any<int>.Value)).Should().NotThrowAsync();
 
