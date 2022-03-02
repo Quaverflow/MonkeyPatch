@@ -26,10 +26,6 @@
     <ProjectReference Include="..\MonkeyPatcher\MonkeyPatcher.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="LoadTests\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

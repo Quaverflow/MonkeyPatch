@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MonkeyPatcher.MonkeyPatch.Concrete;
 using MonkeyPatcher.MonkeyPatch.Shared;
 using MonkeyPatcherTests.TestObjects;
-using Mono.Reflection;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace MonkeyPatcherTests;
@@ -26,9 +20,8 @@ public class PreliminaryTests
 
         var res = sut.Sync();
         res.Should().Be(3);
-
-
     }
+
     [Fact]
     public void Test_SyncVoid()
     {
@@ -78,8 +71,8 @@ public class PreliminaryTests
 
 
         mp.Override<TestDependency, int>(x => TestDependency.ToOverride(Any<int>.Value), () => 10);
-        var r4es = sut.Sync();
-        r4es.Should().Be(10);
+        var res2 = sut.Sync();
+        res2.Should().Be(10);
 
     }
 
@@ -120,16 +113,10 @@ public class PreliminaryTests
     {
         var sut = new TestCaller();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.SyncReturnsStruct);
-        var xd = new List<int> { 1, 2, 3 };
 
         var datetime = DateTime.UtcNow;
-        mp.Override<TestDependency, DateTime>(x => TestDependency.ToOverrideReturnsStruct(), () =>
-            {
-                var x = xd.Count;
-                return datetime;
-            });
+        mp.Override<TestDependency, DateTime>(x => TestDependency.ToOverrideReturnsStruct(), () => datetime);
         sut.Invoking(x => x.SyncReturnsStruct(Any<DateTime>.Value)).Should().NotThrow();
-        var res = sut.SyncReturnsStruct(Any<DateTime>.Value);
         sut.SyncReturnsStruct(Any<DateTime>.Value).Should().Be(datetime);
 
     }

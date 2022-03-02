@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MonkeyPatcher.MonkeyPatch.Concrete;
 using MonkeyPatcher.MonkeyPatch.Concrete.Dto;
 using MonkeyPatcher.MonkeyPatch.Shared;

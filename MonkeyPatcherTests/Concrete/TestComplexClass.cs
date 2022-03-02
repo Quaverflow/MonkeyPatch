@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MonkeyPatcher.MonkeyPatch.Concrete;
-using MonkeyPatcher.MonkeyPatch.Concrete.Dto;
 using MonkeyPatcher.MonkeyPatch.Shared;
 using MonkeyPatcherTests.TestObjects;
 using Xunit;
