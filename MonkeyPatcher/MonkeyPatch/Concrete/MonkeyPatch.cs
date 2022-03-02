@@ -114,15 +114,7 @@ public class MonkeyPatch : IDisposable
             }
         }
 
-        (int, MethodStructure) sut;
-        var counter = 0;
-        while (!_systemUnderTestCallSpecific.TryDequeue(out sut))
-        {
-            Thread.Sleep(1);
-            counter++;
-            (counter != 2000).ThrowIfAssumptionFailed("Internal error. Patcher hung.");
-        }
-        return sut.Item2;
+        return _systemUnderTestCallSpecific.Dequeue().Item2;
     }
 
     /// <summary>
