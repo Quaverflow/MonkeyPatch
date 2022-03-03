@@ -1,10 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Authors>Quaverflow</Authors>
+		<Description>A mocking library to override almost anything (including Concrete types, local method calls and Private methods).</Description>
+		<Copyright>Copyright (c) Mirko Sangrigoli 2022</Copyright>
+		<PackageProjectUrl>https://github.com/Quaverflow/MonkeyValidator/</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>mock;fake;proxy;test;tdd;interceptor;</PackageTags>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<RepositoryUrl>https://github.com/Quaverflow/MonkeyPatch/</RepositoryUrl>
+		<PackageIcon>Icon.jpg</PackageIcon>
+		<FileVersion>1.0.0.0</FileVersion>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<Version>1.0.0</Version>
+	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.4.1" />
