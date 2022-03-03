@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using MonkeyPatcher.MonkeyPatch.Concrete;
-using MonkeyPatcher.MonkeyPatch.Concrete.Dto;
 using MonkeyPatcher.MonkeyPatch.Shared;
 using MonkeyPatcherTests.TestObjects;
+using System.Collections.Generic;
 using Utilities;
 using Xunit;
 
@@ -14,8 +14,9 @@ public class TestPublicClass
     public void Test_Public_Void()
     {
         var sut = new CallingPublic();
+        var db = new List<string>();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.VoidMethod);
-        mp.OverrideVoid<PublicClassToOverride>(x => x.VoidMethod());
+        mp.OverrideVoid<PublicClassToOverride>(x => x.VoidMethod(), ()=> db.Add("hello"));
 
         sut.Invoking(x => x.VoidMethod()).Should().NotThrow();
     }
@@ -101,7 +102,7 @@ public class TestPublicClass
     {
         var sut = new CallingPublic();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.PrivateMethodWithReturn);
-        mp.OverrideNonPublicMethod<PublicClassToOverride, int>(new NonPublicMethodInfo<int>("PrivateMethodWithReturn", AccessType.Private, () => 3));
+        mp.OverrideNonPublicMethod<PublicClassToOverride, int>("PrivateMethodWithReturn", AccessType.Private, () => 3);
 
         sut.Invoking(x => x.PrivateMethodWithReturn()).Should().NotThrow();
         sut.PrivateMethodWithReturn().Should().Be(3);
@@ -112,7 +113,7 @@ public class TestPublicClass
     {
         var sut = new CallingPublic();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.PrivateVoidMethod);
-        mp.OverrideNonPublicVoidMethod<PublicClassToOverride>(new NonPublicVoidMethodInfo("PrivateVoidMethod", AccessType.Private));
+        mp.OverrideNonPublicVoidMethod<PublicClassToOverride>("PrivateVoidMethod", AccessType.Private);
 
         sut.Invoking(x => x.PrivateVoidMethod()).Should().NotThrow();
     }    
@@ -122,7 +123,7 @@ public class TestPublicClass
     {
         var sut = new CallingPublic();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.PrivateStaticMethodWithReturn);
-        mp.OverrideNonPublicMethod<PublicClassToOverride, int>(new NonPublicMethodInfo<int>("PrivateStaticMethodWithReturn", AccessType.PrivateStatic, () => 3));
+        mp.OverrideNonPublicMethod<PublicClassToOverride, int>("PrivateStaticMethodWithReturn", AccessType.PrivateStatic, () => 3);
 
         sut.Invoking(x => x.PrivateStaticMethodWithReturn()).Should().NotThrow();
         sut.PrivateStaticMethodWithReturn().Should().Be(3);
@@ -133,7 +134,7 @@ public class TestPublicClass
     {
         var sut = new CallingPublic();
         using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.PrivateStaticVoidMethod);
-        mp.OverrideNonPublicVoidMethod<PublicClassToOverride>(new NonPublicVoidMethodInfo("PrivateStaticVoidMethod", AccessType.PrivateStatic));
+        mp.OverrideNonPublicVoidMethod<PublicClassToOverride>("PrivateStaticVoidMethod", AccessType.PrivateStatic);
 
         sut.Invoking(x => x.PrivateStaticVoidMethod()).Should().NotThrow();
     }

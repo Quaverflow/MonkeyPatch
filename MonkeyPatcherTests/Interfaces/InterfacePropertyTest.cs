@@ -14,7 +14,7 @@ public class InterfacePropertyTest
         var proxy = new Proxy<IAnsweringEngine>();
         proxy.Setup(x => x.SomeProperty, () => 3);
 
-        var obj = proxy.Object;
+        var obj = proxy.Instance;
         Assert.Equal(3, obj.SomeProperty);
         obj.SomeProperty = 5;
         Assert.Equal(5, obj.SomeProperty);     
@@ -27,7 +27,7 @@ public class InterfacePropertyTest
         var proxy = new Proxy<IAnsweringEngine>();
         proxy.Setup(x => x.SomeGetProperty, () => 3);
 
-        var obj = proxy.Object;
+        var obj = proxy.Instance;
         Assert.Equal(3, obj.SomeProperty);
         obj.SomeProperty = 5;
         Assert.Equal(5, obj.SomeProperty);     
@@ -46,7 +46,7 @@ public class InterfacePropertyTest
             return 3;
         });
 
-        var obj = proxy.Object;
+        var obj = proxy.Instance;
         Assert.Equal(3, obj.SomeProperty);
         Assert.Single(db);
         Assert.Equal("hello", db[0]);
@@ -58,7 +58,7 @@ public class InterfacePropertyTest
         var proxy = new Proxy<IAnsweringEngine>();
         proxy.Setup(x => x.SomeProperty, () => throw new InvalidOperationException("oh no!"));
 
-        var ex = Assert.Throws<InvalidOperationException>(()=> proxy.Object.SomeProperty);
+        var ex = Assert.Throws<InvalidOperationException>(()=> proxy.Instance.SomeProperty);
         Assert.Equal("oh no!", ex.Message);
     }
 }

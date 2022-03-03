@@ -1,5 +1,4 @@
-﻿using MonkeyPatcher.MonkeyPatch.Concrete.Dto;
-using MonoMod.RuntimeDetour;
+﻿using MonoMod.RuntimeDetour;
 using System.Linq.Expressions;
 using System.Reflection;
 using Utilities;
@@ -170,11 +169,12 @@ Make sure you prepend all of your MonkeyPatch instances with 'using'");
     /// </summary>
     /// <typeparam name="TClass"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    /// <param name="methodInfo"></param>
-    public void OverrideNonPublicMethod<TClass, TResult>(NonPublicMethodInfo<TResult> methodInfo) where TClass : class
+    /// <param name="methodName"></param>
+    /// <param name="accessType"></param>
+    /// <param name="actual"></param>
+    /// <param name="methodParameters"></param>
+    public void OverrideNonPublicMethod<TClass, TResult>(string methodName, AccessType accessType, Func<TResult> actual, params Type?[]? methodParameters) where TClass : class
     {
-        var (methodName, accessType, actual, methodParameters) = methodInfo;
-
         //ReflectionHelpers.FindMethod can handle null methodParameters
         var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters!);
         Patch<TResult>(originalMethod, actual);
@@ -184,11 +184,11 @@ Make sure you prepend all of your MonkeyPatch instances with 'using'");
     /// For accessing non public void methods
     /// </summary>
     /// <typeparam name="TClass"></typeparam>
-    /// <param name="methodInfo"></param>
-    public void OverrideNonPublicVoidMethod<TClass>(NonPublicVoidMethodInfo methodInfo) where TClass : class
+    /// <param name="methodName"></param>
+    /// <param name="accessType"></param>
+    /// <param name="methodParameters"></param>
+    public void OverrideNonPublicVoidMethod<TClass>(string methodName, AccessType accessType, params Type?[]? methodParameters) where TClass : class
     {
-        var (methodName, accessType, methodParameters) = methodInfo;
-
         //ReflectionHelpers.FindMethod can handle null methodParameters
         var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters!);
         PatchVoid(originalMethod, () => 0);
@@ -198,11 +198,12 @@ Make sure you prepend all of your MonkeyPatch instances with 'using'");
     /// For accessing non public void methods
     /// </summary>
     /// <typeparam name="TClass"></typeparam>
-    /// <param name="methodInfo"></param>
-    public void OverrideNonPublicVoidMethodInvokeAction<TClass>(NonPublicVoidMethodWithActionInfo methodInfo) where TClass : class
+    /// <param name="methodName"></param>
+    /// <param name="accessType"></param>
+    /// <param name="actual"></param>
+    /// <param name="methodParameters"></param>
+    public void OverrideNonPublicVoidMethodInvokeAction<TClass>(string methodName, AccessType accessType, Action actual, params Type?[]? methodParameters) where TClass : class
     {
-        var (methodName, accessType, actual, methodParameters) = methodInfo;
-        
         //ReflectionHelpers.FindMethod can handle null methodParameters
         var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters!);
         PatchVoid(originalMethod, actual);

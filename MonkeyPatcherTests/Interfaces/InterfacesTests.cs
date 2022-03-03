@@ -17,15 +17,15 @@ public class InterfacesTests
         proxy.Setup(x => x.GetAnswer(Any<string>.Value), () => 3);
         proxy.Setup(x => x.GetAnswer(Any<bool>.Value), () => "3");
         proxy.Setup(x => x.GetAnswer(Any<int>.Value), () => false);
-        var res1 = proxy.Object.GetAnswer("asdf");
+        var res1 = proxy.Instance.GetAnswer("asdf");
         Assert.Equal(3, res1);
-        var res2 = proxy.Object.GetAnswer(true);
+        var res2 = proxy.Instance.GetAnswer(true);
         Assert.Equal("3", res2);
-        var res3 = proxy.Object.GetAnswer(12);
+        var res3 = proxy.Instance.GetAnswer(12);
         Assert.False(res3);
 
         proxy.Setup(x => x.GetAnswer(Any<bool>.Value, Any<bool>.Value), () => "abc");
-        var res4 = proxy.Object.GetAnswer(false, true);
+        var res4 = proxy.Instance.GetAnswer(false, true);
         Assert.Equal("abc", res4);
     }
 
@@ -35,7 +35,7 @@ public class InterfacesTests
         var proxy = new Proxy<IAnsweringEngine>();
         proxy.Setup(x => x.GetAnswer(Any<int>.Value, Any<string>.Value), () =>Task.FromResult(12));
 
-        var res1 = await proxy.Object.GetAnswer(3, "asdf");
+        var res1 = await proxy.Instance.GetAnswer(3, "asdf");
         Assert.Equal(12, res1);
     }
 
@@ -45,7 +45,7 @@ public class InterfacesTests
         var proxy = new Proxy<IAnsweringEngine>();
         proxy.Setup(x => x.GetAnswer(Any<string>.Value), () => throw new InvalidOperationException("3432"));
 
-        var res1 = Assert.Throws<InvalidOperationException>(() => proxy.Object.GetAnswer("asdf"));
+        var res1 = Assert.Throws<InvalidOperationException>(() => proxy.Instance.GetAnswer("asdf"));
         Assert.Equal("3432", res1.Message);
     }
 
@@ -56,7 +56,7 @@ public class InterfacesTests
         proxy.Setup(x => x.GetAnswer(Any<string>.Value), () => throw new InvalidOperationException("3432"));
         proxy.Setup(x => x.GetAnswer(Any<string>.Value), () => 3);
 
-        var res1 = proxy.Object.GetAnswer("asdf");
+        var res1 = proxy.Instance.GetAnswer("asdf");
         Assert.Equal(3, res1);
     }
 
@@ -71,7 +71,7 @@ public class InterfacesTests
             return 3;
         });
 
-        var res1 = proxy.Object.GetAnswer("asdf");
+        var res1 = proxy.Instance.GetAnswer("asdf");
         Assert.Equal(3, res1);
         Assert.NotEmpty(db);
         Assert.Equal(3, db[0]);
@@ -89,7 +89,7 @@ public class InterfacesTests
             return 3;
         });
 
-        var res1 = proxy.Object.GetAnswer("asdf");
+        var res1 = proxy.Instance.GetAnswer("asdf");
         Assert.Equal(3, res1);
         Assert.NotEmpty(db);
         Assert.Equal("asdf", db[0]);
@@ -108,7 +108,7 @@ public class InterfacesTests
             return "hi";
         });
 
-        var res1 = proxy.Object.GetAnswer(true, false);
+        var res1 = proxy.Instance.GetAnswer(true, false);
         Assert.Equal("hi", res1);
         Assert.NotEmpty(db);
         Assert.True(db[0]);
@@ -121,7 +121,7 @@ public class InterfacesTests
         var proxy = new Proxy<SomethingAbstract>();
         proxy.Setup(x => x.SomeAbstractReturns(Any<string>.Value), () => 13);
 
-        Assert.Equal(13, proxy.Object.SomeAbstractReturns("hello"));
+        Assert.Equal(13, proxy.Instance.SomeAbstractReturns("hello"));
     }
 
 
@@ -131,6 +131,6 @@ public class InterfacesTests
         var proxy = new Proxy<SomethingAbstract>();
         proxy.Setup(x => x.SomeVirtualReturns(Any<string>.Value), () => 13);
 
-        Assert.Equal(13, proxy.Object.SomeVirtualReturns("hello"));
+        Assert.Equal(13, proxy.Instance.SomeVirtualReturns("hello"));
     } 
 }

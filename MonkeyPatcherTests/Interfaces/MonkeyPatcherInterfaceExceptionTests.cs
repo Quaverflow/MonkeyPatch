@@ -14,7 +14,7 @@ public class MonkeyPatcherInterfaceExceptionTes
     {
         var proxy = new Proxy<IClassToOverride>();
         proxy.Setup(x => x.DamnMethod(Any<int>.Value), () => throw new InvalidOperationException("Oh No!"));
-        var sut = new TestClass(proxy.Object);
+        var sut = new TestClass(proxy.Instance);
         var result = Assert.Throws<InvalidOperationException>(() => sut.TestMethod(3));
         Assert.Equal("Oh No!", result.Message);
     }
@@ -24,7 +24,7 @@ public class MonkeyPatcherInterfaceExceptionTes
     {
         var proxy = new Proxy<IClassToOverride>();
         proxy.Setup(x => x.DamnMethod2(Any<string>.Value), () => throw new InvalidOperationException("Oh No!"));
-        var sut = new TestClass(proxy.Object);
+        var sut = new TestClass(proxy.Instance);
         var result = Assert.Throws<InvalidOperationException>(() => sut.TestMethod(3));
 
         Assert.Equal("Oh No!", result.Message);
@@ -37,7 +37,7 @@ public class MonkeyPatcherInterfaceExceptionTes
         var proxy = new Proxy<IClassToOverride>();
         proxy.Setup(x => x.DamnMethodAsync2(Any<int>.Value), ()=> throw new Exception("Oh No!"));
 
-        var sut = new TestClass(proxy.Object);
+        var sut = new TestClass(proxy.Instance);
         var result = await Assert.ThrowsAsync<Exception>(() => sut.TestDamnMethodAsyncTaskOfT(3));
 
         Assert.Equal("Oh No!", result.Message);

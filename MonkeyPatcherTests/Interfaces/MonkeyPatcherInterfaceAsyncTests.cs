@@ -16,7 +16,7 @@ public class MonkeyPatcherInterfaceAsyncTests
         proxy.Setup(x => x.DamnMethodAsync(Any<int>.Value), () => Task.FromResult(13));
         proxy.Setup(x => x.DamnMethod2(Any<string>.Value), () => 13);
 
-        var sut = new TestClass(proxy.Object);
+        var sut = new TestClass(proxy.Instance);
         var result = await sut.TestDamnMethodAsyncTaskOfT(3);
 
         Assert.Equal("26", result);
@@ -30,7 +30,7 @@ public class MonkeyPatcherInterfaceAsyncTests
         proxy.Setup(x => x.DamnMethod(Any<int>.Value), () => 13);
         proxy.Setup(x => x.DamnMethodAsync2(Any<int>.Value), () => Task.CompletedTask);
 
-        var sut = new TestClass(proxy.Object);
+        var sut = new TestClass(proxy.Instance);
         var result = await sut.TestMethodAsyncTask(3);
 
         Assert.Equal("13", result);

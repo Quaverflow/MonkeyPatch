@@ -1,11 +1,10 @@
 ﻿using Castle.DynamicProxy;
-using Utilities;
 
 namespace MonkeyPatcher.MonkeyPatch.Interfaces;
 
 public class Proxy<T> where T : class
 {
-    public T Object => GenerateProxy();
+    public T Instance => GenerateProxy();
     internal readonly InterfaceSet<Interceptor> Interceptors = new();
 
     private static readonly ProxyGenerator Generator = new();
