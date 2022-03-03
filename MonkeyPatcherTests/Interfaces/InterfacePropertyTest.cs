@@ -21,6 +21,19 @@ public class InterfacePropertyTest
         obj.SomeProperty ++;
         Assert.Equal(6, obj.SomeProperty);
     }
+    [Fact]
+    public void TestPropertyGetOnly()
+    {
+        var proxy = new Proxy<IAnsweringEngine>();
+        proxy.Setup(x => x.SomeGetProperty, () => 3);
+
+        var obj = proxy.Object;
+        Assert.Equal(3, obj.SomeProperty);
+        obj.SomeProperty = 5;
+        Assert.Equal(5, obj.SomeProperty);     
+        obj.SomeProperty ++;
+        Assert.Equal(6, obj.SomeProperty);
+    } 
 
     [Fact]
     public void TestPropertyCallback()

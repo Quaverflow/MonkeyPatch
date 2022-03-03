@@ -11,7 +11,7 @@ namespace MonkeyPatcherTests.Interfaces;
 public class InterfacesTests
 {
     [Fact]
-    public void Test1()
+    public void Test_FirstAttempt()
     {
         var proxy = new Proxy<IAnsweringEngine>();
         proxy.Setup(x => x.GetAnswer(Any<string>.Value), () => 3);
@@ -121,11 +121,16 @@ public class InterfacesTests
         var proxy = new Proxy<SomethingAbstract>();
         proxy.Setup(x => x.SomeAbstractReturns(Any<string>.Value), () => 13);
 
-        TryAbstract(proxy.Object, 13);
+        Assert.Equal(13, proxy.Object.SomeAbstractReturns("hello"));
     }
 
-    private void TryAbstract(SomethingAbstract sut, int result)
+
+    [Fact]
+    public void Test_Virtual()
     {
-       Assert.Equal(result, sut.SomeAbstractReturns("hello"));
-    }
+        var proxy = new Proxy<SomethingAbstract>();
+        proxy.Setup(x => x.SomeVirtualReturns(Any<string>.Value), () => 13);
+
+        Assert.Equal(13, proxy.Object.SomeVirtualReturns("hello"));
+    } 
 }

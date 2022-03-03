@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Castle.DynamicProxy;
+using Utilities;
 
 namespace MonkeyPatcher.MonkeyPatch.Interfaces;
 
@@ -49,6 +50,8 @@ public static class InterfaceProxySetup
 
     private static Delegate GenerateMethodDelegate<TResult>(MethodCallExpression methodBody)
     {
+        EnsureVirtualOrAbstract(methodBody.Method.IsAbstract || methodBody.Method.IsVirtual);
+
         var ArgTypes = methodBody.Arguments.Select(x => x.Type).ToList();
         ArgTypes.Add(typeof(TResult));
         var delegateType = Expression.GetDelegateType(ArgTypes.ToArray());
@@ -58,8 +61,15 @@ public static class InterfaceProxySetup
     private static Delegate GenerateGetPropertyDelegate(MemberExpression propertyExpression)
     {
         var property = propertyExpression.Member as PropertyInfo;
+        property.ThrowIfNull();
+
+        EnsureVirtualOrAbstract(property.GetMethod == null || property.GetMethod.IsAbstract || property.GetMethod.IsVirtual);
+        EnsureVirtualOrAbstract(property.SetMethod == null || property.SetMethod.IsAbstract || property.SetMethod.IsVirtual);
+
         var delegateType = Expression.GetDelegateType(property.PropertyType);
-        return Delegate.CreateDelegate(delegateType, null, property.GetMethod);
+
+        //There are guards in place for nulls.
+        return Delegate.CreateDelegate(delegateType, null, property.GetMethod!);
     }
 
 
@@ -87,9 +97,13 @@ public static class InterfaceProxySetup
 
     private static Delegate GenerateVoidMethodDelegate(MethodCallExpression methodBody)
     {
+        EnsureVirtualOrAbstract(methodBody.Method.IsAbstract || methodBody.Method.IsVirtual);
+
         var ArgTypes = methodBody.Arguments.Select(x => x.Type).ToList();
         ArgTypes.Add(typeof(void));
         var delegateType = Expression.GetDelegateType(ArgTypes.ToArray());
         return Delegate.CreateDelegate(delegateType, null, methodBody.Method);
     }
+
+    private static void EnsureVirtualOrAbstract(bool assumption) => assumption.ThrowIfAssumptionFailed("Setups must be for an Interface or Abstract and Virtual methods");
 }
