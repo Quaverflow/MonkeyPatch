@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonkeyPatcher", "MonkeyPatcher\MonkeyPatcher.csproj", "{38941D71-58B4-4498-B65D-E50185D7C2CE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonkeyPatcherTests", "MonkeyPatcherTests\MonkeyPatcherTests.csproj", "{08070267-8C46-47DF-BE51-1B1E741B504B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonkeyPatch", "MonkeyPatcher\MonkeyPatch.csproj", "{9340AF0B-C437-48D4-9C48-A97DC0BD9987}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{38941D71-58B4-4498-B65D-E50185D7C2CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38941D71-58B4-4498-B65D-E50185D7C2CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38941D71-58B4-4498-B65D-E50185D7C2CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38941D71-58B4-4498-B65D-E50185D7C2CE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{08070267-8C46-47DF-BE51-1B1E741B504B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{08070267-8C46-47DF-BE51-1B1E741B504B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08070267-8C46-47DF-BE51-1B1E741B504B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08070267-8C46-47DF-BE51-1B1E741B504B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9340AF0B-C437-48D4-9C48-A97DC0BD9987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9340AF0B-C437-48D4-9C48-A97DC0BD9987}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9340AF0B-C437-48D4-9C48-A97DC0BD9987}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9340AF0B-C437-48D4-9C48-A97DC0BD9987}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -22,11 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MonkeyPatcher\MonkeyPatcher.csproj" />
+    <Folder Include="UsageSamples\Interface\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UsageSamples\Interface\" />
+    <ProjectReference Include="..\MonkeyPatcher\MonkeyPatch.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
