@@ -1,5 +1,9 @@
 ﻿using MonkeyPatcher.MonkeyPatch.Concrete;
 using System;
+using System.Runtime.InteropServices.ComTypes;
+using MonkeyPatcher.MonkeyPatch.Interfaces;
+using MonkeyPatcher.MonkeyPatch.Shared;
+using MonkeyPatcherTests.TestObjects;
 using Utilities;
 using Xunit;
 
@@ -10,27 +14,38 @@ public class UsageSampleConcreteTypes
     [Fact]
     public void Private()
     {
-        var sut = new ConsumerClass();
-        using var monkeyPatch = MonkeyPatcherFactory.GetMonkeyPatch(sut.SayHelloVoid);
+        var proxy = new Proxy<ISomeInterface>();
 
-        monkeyPatch.OverrideNonPublicMethod<ClassToOverride, string>("HelloPrivate", AccessType.PrivateStatic, ()=> "hello", typeof(string));
 
+        proxy.Setup(x => x.HelloPublic(Any<string>.Value, Any<bool>.Value),
+            invocation =>
+            {
+                Assert.Equal("Philip takes a bath", invocation.Arguments[0] as string);
+                Assert.False((bool)invocation.Arguments[1]);
+                return "poultry";
+            });
         
-        Assert.Equal("hello", sut.SayHelloVoid(string.Empty));
-
+        var sut = new ConsumerClass(proxy.Instance);
+        Assert.Equal("poultry", sut.SayHelloVoid("Philip takes a bath"));
     }
 }
 
-public class ClassToOverride
+public interface ISomeInterface
 {
-    public static string HelloPublic(string s) => HelloPrivate(s);
-    private static string HelloPrivate(string s) => throw new NotImplementedException("method not overwritten!");
-    
+    string HelloPublic(string s, bool b);
+
 }
 
 public class ConsumerClass
 {
-    public string SayHelloVoid(string s) => ClassToOverride.HelloPublic(s);
+    private readonly ISomeInterface _someInterface;
+
+    public ConsumerClass(ISomeInterface someInterface)
+    {
+        _someInterface = someInterface;
+    }
+
+    public string SayHelloVoid(string s) => _someInterface.HelloPublic(s, false);
 }
 
 
