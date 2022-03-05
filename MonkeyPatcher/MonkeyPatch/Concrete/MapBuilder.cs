@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Utilities.ExtensionMethods;
 
 namespace MonkeyPatcher.MonkeyPatch.Concrete;
@@ -21,6 +23,7 @@ public static class MapBuilder
         };
         map.Add(structure);
         GoDeeperAndBuild(caller, structure, depth, map);
+        Trace.Write(map.Count);
         return map.Copy().ToList();
     }
 
@@ -41,9 +44,9 @@ public static class MapBuilder
         }
     }
 
-    private static void Build(this IReadOnlyList<MethodInfo> methods, MethodStructure parent, int depth, List<MethodStructure> structures)
+    private static void Build(this IReadOnlyList<MethodInfo>? methods, MethodStructure parent, int depth, List<MethodStructure> structures)
     {
-        for (var i = 0; i < methods.Count(); i++)
+        for (var i = 0; i < methods?.Count; i++)
         {
             _index++;
             var key = methods[i].GetKey();

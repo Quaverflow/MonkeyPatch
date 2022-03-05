@@ -63,7 +63,10 @@ public class MonkeyPatch : IDisposable
             throw new NullReferenceException(@"
 The structure was null. 
 This error is usually caused by the patcher not being disposed.
-Make sure you prepend all of your MonkeyPatch instances with 'using'");
+Make sure you prepend all of your MonkeyPatch instances with 'using'
+Alternatively, there's a bug currently being fixed, 
+where private static async methods can't be overridden in Release mode
+and cause this exception to be thrown.");
         }
         structure.ThrowIfNull();
 
