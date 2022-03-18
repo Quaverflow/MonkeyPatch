@@ -53,8 +53,8 @@ public static class MapBuilder
             {
                 var structure = new MethodStructure(key, depth, i)
                 {
-                    Owner = methods[i]?.DeclaringType?.FullName,
-                    ReturnType = methods[i]?.ReturnType.FullName,
+                    Owner = methods[i].DeclaringType?.FullName,
+                    ReturnType = methods[i].ReturnType.FullName,
                     Signature = methods[i].GetSignature(),
                     SuperNodes = new List<MethodStructure> { parent },
                 };
