@@ -5,12 +5,14 @@ namespace Utilities;
 
 public static class Guards
 {
-    public static void ThrowIfNull([NotNull] this object? argument, [CallerArgumentExpression("argument")] string? paramName = null)
+    public static T ThrowIfNull<T>([NotNull] this T? argument, [CallerArgumentExpression("argument")] string? paramName = null)
     {
         if (argument == null)
         {
             throw new ArgumentNullException(paramName);
         }
+
+        return argument;
     }
 
     public static void ThrowIfNullOrEmptyCollection([NotNull] this object? argument, [CallerArgumentExpression("argument")] string? paramName = null)

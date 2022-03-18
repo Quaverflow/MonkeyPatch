@@ -84,6 +84,11 @@ and cause this exception to be thrown.");
             {
                 return default;
             }
+            if (result is Task<TReturn> task)
+            {
+                return task.GetAwaiter().GetResult();
+            }
+       
             return (TReturn)result;
         }
         catch (Exception e)
@@ -99,6 +104,10 @@ and cause this exception to be thrown.");
         try
         {
             var result = patch.Action.DynamicInvoke();
+            if (result is Task<object> task)
+            {
+                return task.GetAwaiter().GetResult();
+            }
             return result;
         }
         catch (Exception e)

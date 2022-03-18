@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-using Mono.Reflection;
+﻿using Mono.Reflection;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Utilities.Constants;
 using static Utilities.Constants.BindingFlagsConst;
 
 namespace Utilities.ExtensionMethods;
@@ -199,73 +197,25 @@ public static class ReflectionHelpers
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, "specified access type doesn't exist.")
         };
 
-    public static MethodInfo?[] GetLocalMethods(this MethodInfo? caller)
+    public static MethodInfo[] GetLocalMethods(this MethodInfo? caller)
     {
         if (caller?.DeclaringType != null && (caller.DeclaringType.IsAbstract || caller.DeclaringType.IsInterface || caller.GetMethodBody() == null))
         {
             return Array.Empty<MethodInfo>();
         }
-        return caller?.GetInstructions()
-                .Where(x => x.Operand is MethodInfo)
-                .Select(x => x.Operand as MethodInfo)
-                .ToArray() ?? Array.Empty<MethodInfo>();
+
+        // the where clause only gets the non null values.
+        return (caller?.GetInstructions()
+            .Where(x => x.Operand is MethodInfo)
+            .Select(x => x.Operand as MethodInfo)
+            .ToArray() ?? Array.Empty<MethodInfo>())!;
     }
 
-    public static MethodInfo?[] ExtractInnerMethodsFromAsyncMethod(this MethodInfo caller)
+    public static MethodInfo[] ExtractInnerMethodsFromAsyncMethod(this MethodInfo caller)
     {
-        var assembly = caller.DeclaringType?.Assembly;
-        assembly.ThrowIfNull();
-
-        var types = assembly.GetTypes().Where(x => x.Name.Contains($"<{caller.Name}>", StringComparison.InvariantCultureIgnoreCase)).ToList();
-        types.ThrowIfNull();
-
-        var type = types.FirstOrDefault(f => f.GetFields(AllFlags).Any(y => y.FieldType.Name == caller.DeclaringType?.Name)) 
-                   ?? GetTypeFromAssembly(types, assembly);
-
-        var methods = new List<MethodInfo?>();
-
-        var innerCMethods = caller.GetPrivate_c_Methods();
-        if (innerCMethods != null)
-        {
-            var declaringType = caller.DeclaringType;
-            Get_c_Methods(methods, innerCMethods, declaringType);
-        }
-
-        methods.AddRange((type != null
-            ? GetLocalMethods(type.GetMethod("MoveNext", AllFlags))
-            : caller.DeclaringType?.GetMethods(AllFlags)) ?? Array.Empty<MethodInfo?>());
-
-        return methods.ToArray();
+        var stateMachine = caller.GetCustomAttribute<AsyncStateMachineAttribute>().ThrowIfNull();
+        return stateMachine.StateMachineType.GetMethod("MoveNext", AllFlags).GetLocalMethods();
     }
-
-    private static Type? GetTypeFromAssembly(List<Type> types, Assembly assembly)
-    {
-        Type? type;
-        var fullName = types.Last().FullName;
-        fullName.ThrowIfNull();
-
-        Trace.WriteLine(fullName);
-        type = assembly.GetType(fullName);
-        return type;
-    }
-
-    private static void Get_c_Methods(List<MethodInfo?> methods, IEnumerable<MethodInfo> innerCMethods, Type? declaringType)
-    {
-        methods.AddRange(innerCMethods
-            .Select(m => declaringType?
-                .GetMethod(m.Name
-                        .Remove(m.Name.IndexOf('>')).Trim('<'),
-                    AllFlags,
-                    m.GetParameters().Select(x => x.ParameterType).ToArray())));
-    }
-
-    public static MethodInfo[]? GetPrivate_c_Methods(this MethodInfo caller)
-    {
-        var c = caller.DeclaringType.GetNestedType("<>c", BindingFlags.NonPublic);
-
-        return c?.GetMethods(AllFlags);
-    }
-
 
     public static string GetKey(this MethodInfo methodInfo) =>
         $"{methodInfo.DeclaringType?.FullName}: {methodInfo.GetSignature()}";

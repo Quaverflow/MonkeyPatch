@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Utilities;
 using Utilities.ExtensionMethods;
 
 namespace MonkeyPatcher.MonkeyPatch.Concrete;
@@ -44,9 +45,9 @@ public static class MapBuilder
         }
     }
 
-    private static void Build(this IReadOnlyList<MethodInfo>? methods, MethodStructure parent, int depth, List<MethodStructure> structures)
+    private static void Build(this MethodInfo[]? methods, MethodStructure parent, int depth, List<MethodStructure> structures)
     {
-        for (var i = 0; i < methods?.Count; i++)
+        for (var i = 0; i < methods?.Length; i++)
         {
             _index++;
             var key = methods[i].GetKey();
@@ -54,8 +55,8 @@ public static class MapBuilder
             {
                 var structure = new MethodStructure(key, depth, i)
                 {
-                    Owner = methods[i].DeclaringType?.FullName,
-                    ReturnType = methods[i].ReturnType.FullName,
+                    Owner = methods[i]?.DeclaringType?.FullName,
+                    ReturnType = methods[i]?.ReturnType.FullName,
                     Signature = methods[i].GetSignature(),
                     SuperNodes = new List<MethodStructure> { parent },
                 };
