@@ -1,12 +1,12 @@
 ﻿using Utilities.ExtensionMethods;
 
-namespace MonkeyPatcher.MonkeyPatch.Interfaces;
+namespace MonkeyPatch.MonkeyPatch.Interfaces;
 
 internal class MethodComparer<T> : IEqualityComparer<T> where T : Interceptor
 {
     public bool Equals(T? x, T? y)
     {
-        return x?.Original?.Method?.GetKey() == y?.Original?.Method?.GetKey();
+        return x?.Original.Method.GetKey() == y?.Original.Method.GetKey();
     }
 
     public int GetHashCode(T obj)

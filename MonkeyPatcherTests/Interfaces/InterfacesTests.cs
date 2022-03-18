@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MonkeyPatcher.MonkeyPatch.Interfaces;
-using MonkeyPatcher.MonkeyPatch.Shared;
+using MonkeyPatch.MonkeyPatch.Interfaces;
+using MonkeyPatch.MonkeyPatch.Shared;
 using MonkeyPatcherTests.TestObjects;
 using Xunit;
 

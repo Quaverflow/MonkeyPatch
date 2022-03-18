@@ -1,10 +1,10 @@
-﻿using MonoMod.RuntimeDetour;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
+using MonoMod.RuntimeDetour;
 using Utilities;
 using Utilities.ExtensionMethods;
 
-namespace MonkeyPatcher.MonkeyPatch.Concrete;
+namespace MonkeyPatch.MonkeyPatch.Concrete;
 
 public class MonkeyPatch : IDisposable
 {

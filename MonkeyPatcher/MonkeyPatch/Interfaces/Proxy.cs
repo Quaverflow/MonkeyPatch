@@ -1,6 +1,6 @@
 ﻿using Castle.DynamicProxy;
 
-namespace MonkeyPatcher.MonkeyPatch.Interfaces;
+namespace MonkeyPatch.MonkeyPatch.Interfaces;
 
 public class Proxy<T> where T : class
 {

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Utilities;
 
-namespace MonkeyPatcher.MonkeyPatch.Concrete;
+namespace MonkeyPatch.MonkeyPatch.Concrete;
 
 public static class MonkeyPatcherFactory
 {

@@ -1,10 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using Utilities;
 using Utilities.ExtensionMethods;
 
-namespace MonkeyPatcher.MonkeyPatch.Concrete;
+namespace MonkeyPatch.MonkeyPatch.Concrete;
 
 
 public static class MapBuilder

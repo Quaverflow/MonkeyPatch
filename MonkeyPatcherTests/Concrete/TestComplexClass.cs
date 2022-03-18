@@ -3,8 +3,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MonkeyPatcher.MonkeyPatch.Concrete;
-using MonkeyPatcher.MonkeyPatch.Shared;
+using MonkeyPatch.MonkeyPatch.Concrete;
+using MonkeyPatch.MonkeyPatch.Shared;
 using MonkeyPatcherTests.TestObjects;
 using Xunit;
 

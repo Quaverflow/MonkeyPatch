@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using MonkeyPatcher.MonkeyPatch.Concrete;
-using MonkeyPatcher.MonkeyPatch.Shared;
 using MonkeyPatcherTests.TestObjects;
 using System.Threading.Tasks;
+using MonkeyPatch.MonkeyPatch.Concrete;
+using MonkeyPatch.MonkeyPatch.Shared;
 using Utilities;
 using Xunit;
 
@@ -136,6 +136,5 @@ public class TestPublicClassAsync
         mp.OverrideNonPublicMethod<PublicClassToOverride, Task>("PrivateStaticVoidMethodAsync", AccessType.PrivateStatic, () => Task.CompletedTask);
 
         await sut.Invoking(x => x.PrivateStaticVoidMethodAsync(Any<int>.Value)).Should().NotThrowAsync();
-
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace MonkeyPatcher.MonkeyPatch.Interfaces;
+namespace MonkeyPatch.MonkeyPatch.Interfaces;
 
 internal class InterfaceSet<T> : IEnumerable<T> where T : Interceptor
 {

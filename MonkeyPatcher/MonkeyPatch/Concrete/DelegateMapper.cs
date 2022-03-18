@@ -1,4 +1,4 @@
-﻿namespace MonkeyPatcher.MonkeyPatch.Concrete;
+﻿namespace MonkeyPatch.MonkeyPatch.Concrete;
 
 internal class DelegateMapper
 {

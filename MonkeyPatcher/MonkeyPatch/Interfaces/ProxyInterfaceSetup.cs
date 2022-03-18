@@ -3,7 +3,7 @@ using System.Reflection;
 using Castle.DynamicProxy;
 using Utilities;
 
-namespace MonkeyPatcher.MonkeyPatch.Interfaces;
+namespace MonkeyPatch.MonkeyPatch.Interfaces;
 
 public static class InterfaceProxySetup
 {

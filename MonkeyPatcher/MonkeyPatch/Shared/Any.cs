@@ -1,4 +1,4 @@
-﻿namespace MonkeyPatcher.MonkeyPatch.Shared;
+﻿namespace MonkeyPatch.MonkeyPatch.Shared;
 
 public static class Any<TParam>
 {

@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using MonkeyPatcher.MonkeyPatch.Concrete;
-using MonkeyPatcher.MonkeyPatch.Shared;
 using MonkeyPatcherTests.TestObjects;
 using System.Collections.Generic;
+using MonkeyPatch.MonkeyPatch.Concrete;
+using MonkeyPatch.MonkeyPatch.Shared;
 using Utilities;
 using Xunit;
 

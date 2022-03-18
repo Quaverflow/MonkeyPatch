@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MonkeyPatcher.MonkeyPatch.Concrete;
+namespace MonkeyPatch.MonkeyPatch.Concrete;
 
 public class MethodStructure
 {

@@ -1,8 +1,8 @@
-﻿using Castle.DynamicProxy;
-using System.Reflection;
+﻿using System.Reflection;
+using Castle.DynamicProxy;
 using Utilities;
 
-namespace MonkeyPatcher.MonkeyPatch.Interfaces;
+namespace MonkeyPatch.MonkeyPatch.Interfaces;
 
 internal class MethodSelector : IInterceptorSelector
 {

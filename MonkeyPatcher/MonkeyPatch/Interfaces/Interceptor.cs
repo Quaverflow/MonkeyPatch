@@ -1,6 +1,6 @@
 ﻿using Castle.DynamicProxy;
 
-namespace MonkeyPatcher.MonkeyPatch.Interfaces;
+namespace MonkeyPatch.MonkeyPatch.Interfaces;
 
 internal class Interceptor : IInterceptor
 {

@@ -1,8 +1,7 @@
-﻿using MonkeyPatcher.MonkeyPatch.Concrete;
-using System;
+﻿using System;
 using System.Runtime.InteropServices.ComTypes;
-using MonkeyPatcher.MonkeyPatch.Interfaces;
-using MonkeyPatcher.MonkeyPatch.Shared;
+using MonkeyPatch.MonkeyPatch.Interfaces;
+using MonkeyPatch.MonkeyPatch.Shared;
 using MonkeyPatcherTests.TestObjects;
 using Utilities;
 using Xunit;
