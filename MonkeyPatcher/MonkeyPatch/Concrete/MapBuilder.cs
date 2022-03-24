@@ -23,7 +23,7 @@ public static class MapBuilder
         map.Add(structure);
         GoDeeperAndBuild(caller, structure, depth, map);
         Trace.Write(map.Count);
-        return map.Copy().ToList();
+        return map.ToList();
     }
 
     private static void GoDeeperAndBuild(this MethodInfo method, MethodStructure structure, int depth, List<MethodStructure> structures)
