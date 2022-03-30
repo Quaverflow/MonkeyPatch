@@ -2,6 +2,11 @@
 
 MonkeyPatch leverages the power of MonoMod and Castle.Core to override Concrete, Abstract and Interface types (including private and static methods).
 
+## What's new
+
+Removed a bug that caused the patcher not to find methods.
+Added overloads for all the `Override` methods to support plain results rather than only actions.
+
 ## The Api
 
 For concrete instance or static types, your code would look something like this:

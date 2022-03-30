@@ -20,16 +20,14 @@ public class MonkeyPatch : IDisposable
 
     private static MethodStructure? GetStructure(MethodInfo original) => SystemUnderTest.FirstOrDefault(x => x.Key == original.GetKey());
 
-    internal void Patch<TReturn>(MethodInfo original, Delegate? actual)
+    internal static void Patch<TReturn>(MethodInfo original, Delegate? actual)
     {
         ProcessStructure(original, actual);
 
         var returnType = typeof(TReturn);
-        returnType.ThrowIfNull();
 
         if (returnType.BaseType == typeof(Task))
         {
-            returnType = typeof(TReturn).GetGenericArguments().FirstOrDefault();
             var func = WrapRefType;
             Detours.Add(new NativeDetour(original, func.Method));
         }
@@ -45,7 +43,7 @@ public class MonkeyPatch : IDisposable
         }
     }
 
-    internal void PatchVoid(MethodInfo original, Delegate? actual)
+    internal static void PatchVoid(MethodInfo original, Delegate? actual)
     {
         ProcessStructure(original, actual);
 
@@ -88,7 +86,7 @@ and cause this exception to be thrown.");
             {
                 return task.GetAwaiter().GetResult();
             }
-       
+
             return (TReturn)result;
         }
         catch (Exception e)
@@ -142,33 +140,50 @@ and cause this exception to be thrown.");
     /// <typeparam name="TResult"></typeparam>
     /// <param name="expression"></param>
     /// <param name="actual"></param>
-       public void Override<TClass, TResult>(Expression<Func<TClass, TResult>> expression, Func<TResult>? actual) where TClass : class
-          => Patch<TResult>(GenerateMethodInfo(expression.Body), actual);
+    public void Override<TClass, TResult>(Expression<Func<TClass, TResult>> expression, Func<TResult>? actual) where TClass : class
+       => Patch<TResult>(GenerateMethodInfo(expression.Body), actual);
 
     /// <summary>
-    /// For static methods that should return null or a value, with an optional callback function.
+    /// For instance methods that should return null or a value.
     /// </summary>
     /// <typeparam name="TClass"></typeparam>
     /// <typeparam name="TResult"></typeparam>
     /// <param name="expression"></param>
     /// <param name="actual"></param>
-    public void Override<TResult>(Expression<Func<TResult>> expression, Func<TResult>? actual) 
+    public void Override<TClass, TResult>(Expression<Func<TClass, TResult>> expression, TResult? actual) where TClass : class
+       => Patch<TResult>(GenerateMethodInfo(expression.Body), () => actual);
+
+
+    /// <summary>
+    /// For static methods that should return null or a value, with an optional callback function.
+    /// </summary>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="expression"></param>
+    /// <param name="actual"></param>
+    public void Override<TResult>(Expression<Func<TResult>> expression, Func<TResult>? actual)
           => Patch<TResult>(GenerateMethodInfo(expression.Body), actual);
 
     /// <summary>
-    /// For instance void methods, with an optional callback.
+    /// For instance void methods, with callback.
     /// </summary>
     /// <typeparam name="TClass"></typeparam>
     /// <param name="expression"></param>
     /// <param name="actual"></param>
-    public void OverrideVoid<TClass>(Expression<Action<TClass>> expression, Action? actual = null) where TClass : class 
-        => PatchVoid(GenerateMethodInfo(expression.Body), actual ?? EmptyMethod);
+    public void OverrideVoid<TClass>(Expression<Action<TClass>> expression, Action actual) where TClass : class
+        => PatchVoid(GenerateMethodInfo(expression.Body), actual);
+
+    /// <summary>
+    /// For instance void methods.
+    /// </summary>
+    /// <typeparam name="TClass"></typeparam>
+    /// <param name="expression"></param>
+    public void OverrideVoid<TClass>(Expression<Action<TClass>> expression) where TClass : class
+        => PatchVoid(GenerateMethodInfo(expression.Body), EmptyMethod);
 
 
     /// <summary>
     /// For static void methods, with an optional callback.
     /// </summary>
-    /// <typeparam name="TClass"></typeparam>
     /// <param name="expression"></param>
     /// <param name="actual"></param>
     public void OverrideVoid(Expression<Action> expression, Action? actual = null)
