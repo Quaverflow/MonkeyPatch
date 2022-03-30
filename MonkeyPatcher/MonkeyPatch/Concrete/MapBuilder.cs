@@ -1,15 +1,16 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Text.Json;
 using Utilities.ExtensionMethods;
 
 namespace MonkeyPatch.MonkeyPatch.Concrete;
 
 
-public static class MapBuilder
+internal static class MapBuilder
 {
     private static int _index;
     private static int _maxDepth;
-    public static List<MethodStructure> BuildMap(this MethodInfo caller, int maxDepth)
+    internal static List<MethodStructure> BuildMap(this MethodInfo caller, int maxDepth)
     {
         _maxDepth = maxDepth;
         var map = new List<MethodStructure>();
@@ -22,7 +23,6 @@ public static class MapBuilder
         };
         map.Add(structure);
         GoDeeperAndBuild(caller, structure, depth, map);
-        Trace.Write(map.Count);
         return map.ToList();
     }
 
@@ -56,7 +56,7 @@ public static class MapBuilder
                     Owner = methods[i].DeclaringType?.FullName,
                     ReturnType = methods[i].ReturnType.FullName,
                     Signature = methods[i].GetSignature(),
-                    SuperNodes = new List<MethodStructure> { parent },
+                    SuperNodes = new List<MethodStructure> {parent},
                 };
                 structure.Indexes.Add(_index);
                 structures.Add(structure);
@@ -79,22 +79,4 @@ public static class MapBuilder
             }
         }
     }
-
-
-    //public static void PrintJsonMap(this Delegate caller, string path = null) => PrintJsonMap(caller.Method, path);
-    //public static void PrintJsonMap(this MethodInfo caller, string path = null)
-    //{
-    //    var date = DateTime.UtcNow;
-    //    StreamWriter x = new StreamWriter(string.IsNullOrWhiteSpace(path) ? $@"..\..\..\Trees\tree_{date.Day}-{date.Month}-{date.Year}_{date.Hour}.{date.Minute}.{date.Second}_.json" : path);
-    //    var structure = new MethodStructure(caller.GetKey());
-    //    structure.Owner = caller.DeclaringType?.FullName;
-    //    structure.ReturnType = caller.ReturnType.FullName;
-    //    structure.Signature = caller.GetSignature();
-    //    _volatileMethodTree.Add(structure);
-    //    GoDeeperAndBuild(caller, structure);
-    //    var ax = JsonSerializer.Serialize(_volatileMethodTree);
-    //    x.Write(ax);
-    //    x.Close();
-    //}
-
 }

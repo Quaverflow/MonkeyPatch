@@ -58,7 +58,7 @@ public class TestComplexClass
     public async Task Test_Passing()
     {
         var sut = new ComplexClass();
-        using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.GetTestClass, 1000);
+        using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.GetTestClass, 25);
         mp.Override<TestCaller, int>(x => x.Sync(), ()=> 3);
 
         mp.Override<HttpClient, Task<HttpResponseMessage>>(x => x.GetAsync(Any<string>.Value), ()=> Task.FromResult(new HttpResponseMessage(HttpStatusCode.Accepted)

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.Json;
 using MonoMod.RuntimeDetour;
 using Utilities;
 using Utilities.ExtensionMethods;
@@ -235,6 +236,22 @@ and cause this exception to be thrown.");
         var originalMethod = ReflectionHelpers.FindMethod<TClass>(methodName, accessType.GetBindingFlags(), methodParameters!);
         PatchVoid(originalMethod, actual);
     }
+
+    //upcoming feature
+    ///// <summary>
+    ///// Dumps a .json of the methods map.
+    ///// Default location: \Trees\tree_{date.Day}-{date.Month}-{date.Year}_{date.Hour}.{date.Minute}.{date.Second}_.json")
+    ///// </summary>
+    ///// <param name="path"></param>
+    //public MonkeyPatch DumpJsonMap(string? path = null)
+    //{
+    //    var date = DateTime.UtcNow;
+    //    var streamWriter = new StreamWriter(path ?? $@"..\..\..\Trees\tree_{date.Day}-{date.Month}-{date.Year}_{date.Hour}.{date.Minute}.{date.Second}_.json", new FileStreamOptions(){});
+    //    var json = JsonSerializer.Serialize(SystemUnderTest);
+    //    streamWriter.Write(json);
+    //    streamWriter.Close();
+    //    return this;
+    //}
 
     private static void EmptyMethod() { }
 

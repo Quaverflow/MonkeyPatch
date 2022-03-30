@@ -1,21 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <PackageId>Monkey.Utilities</PackageId>
-    <Authors>Quaverflow</Authors>
-    <Company>Mirko Sangrigoli</Company>
-    <Product>Monkey.Utilities</Product>
-    <Description>Used internally by MonkeyPatch</Description>
-    <Copyright>Copyright (c) Mirko Sangrigoli 2022</Copyright>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackageId>Monkey.Utilities</PackageId>
+		<Authors>Quaverflow</Authors>
+		<Company>Mirko Sangrigoli</Company>
+		<Product>Monkey.Utilities</Product>
+		<Description>Used internally by MonkeyPatch</Description>
+		<Copyright>Copyright (c) Mirko Sangrigoli 2022</Copyright>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Version>1.0.1</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Mono.Reflection" Version="2.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Mono.Reflection" Version="2.0.0" />
+	</ItemGroup>
 
 </Project>
