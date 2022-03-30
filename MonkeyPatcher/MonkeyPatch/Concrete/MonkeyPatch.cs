@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using MonoMod.RuntimeDetour;
 using Utilities;
 using Utilities.ExtensionMethods;
@@ -237,21 +238,47 @@ and cause this exception to be thrown.");
         PatchVoid(originalMethod, actual);
     }
 
-    //upcoming feature
-    ///// <summary>
-    ///// Dumps a .json of the methods map.
-    ///// Default location: \Trees\tree_{date.Day}-{date.Month}-{date.Year}_{date.Hour}.{date.Minute}.{date.Second}_.json")
-    ///// </summary>
-    ///// <param name="path"></param>
-    //public MonkeyPatch DumpJsonMap(string? path = null)
-    //{
-    //    var date = DateTime.UtcNow;
-    //    var streamWriter = new StreamWriter(path ?? $@"..\..\..\Trees\tree_{date.Day}-{date.Month}-{date.Year}_{date.Hour}.{date.Minute}.{date.Second}_.json", new FileStreamOptions(){});
-    //    var json = JsonSerializer.Serialize(SystemUnderTest);
-    //    streamWriter.Write(json);
-    //    streamWriter.Close();
-    //    return this;
-    //}
+    /// <summary>
+    /// Dumps a .json of the methods map.
+    /// Default location: \Trees\tree_{date.Day}-{date.Month}-{date.Year}_{date.Hour}.{date.Minute}.{date.Second}_.json")
+    /// Custom path should end with \;
+    /// </summary>
+    /// <param name="path"></param>
+   public MonkeyPatch DumpJsonMap(string? path = null) => InternalDumpJsonMap(BuildPath(path));
+   public MonkeyPatch DumpJsonMap(Delegate methodToFind, string? path = null) => InternalDumpJsonMap(BuildPath(path), methodToFind.Method.GetKey());
+
+    private static string BuildPath(string? path)
+    {
+        var date = DateTime.UtcNow;
+        var filename = $"tree_{date.Day}-{date.Month}-{date.Year}_{date.Hour}.{date.Minute}.{date.Second}_.json";
+        var actualPath= path ?? @"..\..\..\Trees\";
+        Directory.CreateDirectory(actualPath);
+        return actualPath + filename;
+    }
+
+    private MonkeyPatch InternalDumpJsonMap(string path, string? key = null)
+    {
+        using var streamWriter = new StreamWriter(path);
+
+        string json;
+        if (key != null)
+        {
+            json = JsonSerializer.Serialize(SystemUnderTest.First(x => x.Key == key));
+        }
+        else
+        {
+            json = JsonSerializer.Serialize(SystemUnderTest, new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                MaxDepth = 200
+            });
+        }
+        
+        streamWriter.Write(json);
+        streamWriter.Close();
+        return this;
+    }
+
 
     private static void EmptyMethod() { }
 

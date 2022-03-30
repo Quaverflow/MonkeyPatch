@@ -2,14 +2,17 @@
 
 namespace MonkeyPatch.MonkeyPatch.Concrete;
 
-public class MethodStructure
+internal class MethodStructure
 {
-    public MethodStructure(string key, int depth, int stackPosition)
+    internal MethodStructure(string key, int depth, int stackPosition)
     {
         Key = key;
         Depth = depth;
         StackPosition = stackPosition;
     }
+
+
+
     public string Signature { get; set; }
     public string? Owner { get; set; }
     public int Depth { get; set; }
@@ -21,7 +24,11 @@ public class MethodStructure
     public bool IsDetoured { get; set; }
     [JsonIgnore]
     public string Key { get; set; }
+
+    [JsonIgnore]
     public List<MethodStructure> SubNodes { get; set; } = new();
+   
+    [JsonIgnore]
     public List<MethodStructure> SuperNodes { get; set; } = new();
     public List<int> Indexes { get; set; } = new();
 }

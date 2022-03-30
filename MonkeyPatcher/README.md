@@ -4,8 +4,7 @@ MonkeyPatch leverages the power of MonoMod and Castle.Core to override Concrete,
 
 ## What's new
 
-Removed a bug that caused the patcher not to find methods.
-Added overloads for all the `Override` methods to support plain results rather than only actions.
+Added a `DumpJson` on the `MonkeyPatch`, which allows to you to get a json version of the methods map created by MonkeyPatch
 
 ## The Api
 
