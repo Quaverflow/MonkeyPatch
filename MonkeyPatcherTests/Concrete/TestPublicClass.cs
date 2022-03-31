@@ -36,7 +36,7 @@ public class TestPublicClass
     public void Test_Public_Return()
     {
         var sut = new CallingPublic();
-        using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.MethodWithReturn).DumpJsonMap();
+        using var mp = MonkeyPatcherFactory.GetMonkeyPatch(sut.MethodWithReturn);
         mp.Override<PublicClassToOverride, int>(x => x.MethodWithReturn(), 3);
 
         sut.Invoking(x => x.MethodWithReturn()).Should().NotThrow();
