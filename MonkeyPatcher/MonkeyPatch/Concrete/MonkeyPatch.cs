@@ -12,7 +12,7 @@ public class MonkeyPatch : IDisposable
 {
     private static readonly List<IDetour?> Detours = new();
     private static readonly List<MethodStructure> SystemUnderTest = new();
-    private static Queue<(int, MethodStructure)> _systemUnderTestCallSpecific = new();
+    private static Queue<MethodStructure> _systemUnderTestCallSpecific = new();
     private readonly Delegate _disposed;
     internal MonkeyPatch(Delegate disposed, MethodInfo caller, int maxScanningDepth)
     {
@@ -121,18 +121,18 @@ and cause this exception to be thrown.");
     {
         if (!_systemUnderTestCallSpecific.Any())
         {
-            _systemUnderTestCallSpecific = new Queue<(int, MethodStructure)>();
+            _systemUnderTestCallSpecific = new Queue<MethodStructure>();
             var distinct = SystemUnderTest.Where(x => x.IsDetoured).ToList();
             foreach (var structure in distinct)
             {
-                foreach (var index in structure.Indexes)
+                for (var i = 0; i < structure.Indexes.Count; i++)
                 {
-                    _systemUnderTestCallSpecific.Enqueue((index, structure));
+                    _systemUnderTestCallSpecific.Enqueue(structure);
                 }
             }
         }
 
-        return _systemUnderTestCallSpecific.Dequeue().Item2;
+        return _systemUnderTestCallSpecific.Dequeue();
     }
 
     /// <summary>
